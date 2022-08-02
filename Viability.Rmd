@@ -1,0 +1,102 @@
+---
+title: "Nakuru Communty Boreholes Viabilty Analysis"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: row
+    vertical_layout: fill
+   # theme: flatly
+     
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(psych)
+library(dplyr)
+library(DT)
+library(tidyverse)
+library(janitor)
+library(leaflet)
+```
+
+# {Mapped Boreholes}
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Nakuru Community Mapped Boreholes
+
+```{r}
+Data4 <- read_csv("E:/Nakuru WaterWax/Unicef Project/Data Using R/Viablity of the Boreholes/Data4.csv")
+
+
+datatable(Data4,
+           caption = "Nakuru Community Mapped Boreholes",
+          rownames = T,
+          filter = "top",
+          class = "hover cell-border stripe", #for making grid cells
+          editable = "cell", # for editing cells
+          extensions="Buttons",
+          options = list(pageLength = 25,dom="Bfrtip", buttons=c( '','', '' )))
+```
+
+# {Viable Boreholes}
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Viable Boreholes
+
+```{r}
+Data4$Sub_Counties<-as.factor(Data4$Sub_Counties)
+
+Data<-Data4 %>% 
+  select(Sub_Counties,Borehole_Name,Operational_Status,Yield,Land_Owner) %>% 
+  filter(Operational_Status=='Yes', Yield>8)
+
+
+datatable(Data,
+           caption = "Nakuru Community Viable Boreholes",
+          rownames = T,
+          filter = "top",
+          class = "hover cell-border stripe", #for making grid cells
+          editable = "cell", # for editing cells
+          extensions="Buttons",
+          options = list(pageLength = 25,dom="Bfrtip", buttons=c( '','', '' )))
+
+```
+
+# {Tables}
+
+Row {data-height=450}
+-----------------------------------------------------------------------
+
+### Table of Viable Boreholes Operating per Sub-county 
+```{r}
+Data %>% 
+  tabyl(Sub_Counties,Operational_Status) %>% 
+  adorn_totals()
+```
+
+Column {data-height=850}
+-----------------------------------------------------------------------
+
+### Borehole Sitting on Whose Land per Sub-County 
+
+```{r}
+Data %>% 
+tabyl(Sub_Counties,Land_Owner)
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
